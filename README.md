@@ -42,18 +42,27 @@ python3 scripts/extract-products.py --list data/product-pages.txt --limit 100
 
 ### Bulk catalog (completed)
 
-- **784** product pages downloaded from Wayback snapshot `20230321042548`
-- **784** product images recovered (CDX per-URL timestamps, `home_default` fallback)
-- Full catalog in `data/products.json` (~1 MB)
+- **784** product pages + **84** site pages (categories, CMS, contact)
+- **784** product images + **1003** theme/UI assets
+- Static site build: **2,658 files**, ~359 MB in `site/`
+- PrestaShop import: `data/products-prestashop.csv`
 
 ```bash
-# Re-download all products (~10 min at 0.75s delay)
-python3 scripts/download-snapshot.py --list data/product-pages.txt --delay 0.75
+# Site pages (categories, CMS, homepage)
+bash scripts/build-site-pages-list.sh
+python3 scripts/download-snapshot.py --list data/site-pages.txt --delay 0.6
 
-# Download images after extraction
-python3 scripts/extract-products.py --mirror mirror
-python3 scripts/download-images.py --delay 0.4
+# Theme assets (CSS, JS, slider images)
+python3 scripts/download-assets.py --delay 0.35
+
+# Build deployable static site
+bash scripts/build-site.sh
+
+# Export for PrestaShop rebuild
+python3 scripts/export-prestashop-csv.py
 ```
+
+Deploy instructions: [deploy/README.md](./deploy/README.md)
 
 ## Quick reference
 

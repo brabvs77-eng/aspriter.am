@@ -1,0 +1,7 @@
+# PrestaShop friendly URLs → static files (Cloudflare Pages / Netlify)
+/contact-us /contact-us/index.html 200
+/sitemap /sitemap/index.html 200
+/content/* /content/:splat/index.html 200
+
+# Fallback for extensionless category paths saved as index.html
+/3-beauty-shop-category /3-beauty-shop-category/index.html 200
