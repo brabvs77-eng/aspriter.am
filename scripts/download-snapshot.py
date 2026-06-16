@@ -91,7 +91,9 @@ def load_urls(list_file: Path, limit: int | None = None) -> list[str]:
         line = line.strip()
         if not line:
             continue
-        url = line.split("\t")[0] if "\t" in line else line
+        # CDX lines are space-separated; URL is always first field
+        url = line.split()[0] if " " in line else line
+        url = url.split("\t")[0] if "\t" in url else url
         if url.startswith("http"):
             urls.append(url)
     if limit:

@@ -117,7 +117,11 @@ def extract_from_url_list(list_file: Path, snapshot: str, limit: int | None, del
     session = requests.Session()
     session.headers["User-Agent"] = "aspriter-restore/1.0"
     products = []
-    urls = [l.split("\t")[0].strip() for l in list_file.read_text().splitlines() if l.strip()]
+    urls = []
+    for line in list_file.read_text().splitlines():
+        line = line.strip()
+        if line:
+            urls.append(line.split()[0])
 
     if limit:
         urls = urls[:limit]

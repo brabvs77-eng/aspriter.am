@@ -40,6 +40,21 @@ python3 scripts/download-snapshot.py --list data/product-pages.txt --limit 50
 python3 scripts/extract-products.py --list data/product-pages.txt --limit 100
 ```
 
+### Bulk catalog (completed)
+
+- **784** product pages downloaded from Wayback snapshot `20230321042548`
+- **784** product images recovered (CDX per-URL timestamps, `home_default` fallback)
+- Full catalog in `data/products.json` (~1 MB)
+
+```bash
+# Re-download all products (~10 min at 0.75s delay)
+python3 scripts/download-snapshot.py --list data/product-pages.txt --delay 0.75
+
+# Download images after extraction
+python3 scripts/extract-products.py --mirror mirror
+python3 scripts/download-images.py --delay 0.4
+```
+
 ## Quick reference
 
 | Item | Value |
