@@ -144,15 +144,26 @@ def main() -> None:
         parser.error("Specify --poc or --list")
 
     print(f"Snapshot: {SNAPSHOT}")
-    print(f"Downloading {len(targets)} items to {MIRROR}/")
+    print(f"Downloading {len(targets)} items to {MIRROR}/", flush=True)
 
     ok = 0
-    for original, raw_html in targets:
+    skipped = 0
+    total = len(targets)
+    for i, (original, raw_html) in enumerate(targets, 1):
+        dest = local_path(original if original.startswith("http") else BASE + original)
+        if dest.exists() and dest.stat().st_size > 0:
+            skipped += 1
+            ok += 1
+            if i % 50 == 0 or i == total:
+                print(f"  [{i}/{total}] {ok} ok ({skipped} cached)", flush=True)
+            continue
         if download(session, original, raw_html=raw_html):
             ok += 1
+        if i % 25 == 0 or i == total:
+            print(f"  [{i}/{total}] {ok} ok ({skipped} cached)", flush=True)
         time.sleep(args.delay)
 
-    print(f"\nDownloaded {ok}/{len(targets)} items.")
+    print(f"\nDownloaded {ok}/{total} items ({skipped} already cached).", flush=True)
 
 
 if __name__ == "__main__":
