@@ -13,6 +13,33 @@ See **[RESTORATION_PLAN.md](./RESTORATION_PLAN.md)** for the full restoration pl
 - Phase-by-phase steps, tooling, and commands
 - Risks, success criteria, and next actions
 
+## Quick start
+
+```bash
+# 1. Export URL index from Wayback CDX API
+bash scripts/fetch-cdx-urls.sh
+
+# 2. Download proof-of-concept snapshot (homepage, sample products, theme CSS)
+pip install -r requirements.txt
+python3 scripts/download-snapshot.py --poc
+
+# 3. Clean HTML and build static site output
+python3 scripts/strip-wayback.py
+
+# 4. Extract product catalog from mirrored pages
+python3 scripts/extract-products.py --mirror mirror
+```
+
+### Bulk download
+
+```bash
+# First N product pages (rate-limited, ~1 req/sec)
+python3 scripts/download-snapshot.py --list data/product-pages.txt --limit 50
+
+# Extract all products directly from Wayback (no local mirror needed)
+python3 scripts/extract-products.py --list data/product-pages.txt --limit 100
+```
+
 ## Quick reference
 
 | Item | Value |
