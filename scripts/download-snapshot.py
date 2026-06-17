@@ -17,7 +17,13 @@ SNAPSHOT = os.environ.get("SNAPSHOT_TIMESTAMP", "20230321042548")
 BASE = "https://aspriter.am"
 DELAY = float(os.environ.get("REQUEST_DELAY", "1.0"))
 ROOT = Path(__file__).resolve().parent.parent
-MIRROR = ROOT / "mirror"
+
+
+def mirror_dir() -> Path:
+    return Path(os.environ.get("MIRROR_DIR", ROOT / "mirror"))
+
+
+MIRROR = mirror_dir()
 
 
 def wayback_url(original: str, raw_html: bool = False) -> str:
@@ -51,7 +57,7 @@ def local_path(url: str) -> Path:
     elif "." not in Path(path).name and "?" not in path:
         path += "/index.html"
     # Strip query string from filesystem path but keep in download URL
-    return MIRROR / path.split("?")[0]
+    return mirror_dir() / path.split("?")[0]
 
 
 def download(session: requests.Session, original: str, raw_html: bool = False) -> bool:
@@ -114,8 +120,16 @@ def main() -> None:
         help="Download proof-of-concept set (homepage, theme, sample products)",
     )
     parser.add_argument("--limit", type=int, default=None, help="Max URLs from list")
+    parser.add_argument("--mirror-dir", type=Path, help="Output mirror directory")
     parser.add_argument("--delay", type=float, default=DELAY, help="Seconds between requests")
     args = parser.parse_args()
+
+    global MIRROR
+    if args.mirror_dir:
+        MIRROR = args.mirror_dir
+        os.environ["MIRROR_DIR"] = str(args.mirror_dir)
+    else:
+        MIRROR = mirror_dir()
 
     session = requests.Session()
     session.headers["User-Agent"] = "aspriter-restore/1.0 (Wayback restoration project)"

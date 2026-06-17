@@ -1,5 +1,7 @@
 mirror/
 site/
+!mirror-chunks/
+mirror-chunks/**/.chunk-id
 data/download-*.log
 __pycache__/
 *.pyc

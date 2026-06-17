@@ -62,7 +62,26 @@ bash scripts/build-site.sh
 python3 scripts/export-prestashop-csv.py
 ```
 
-Deploy instructions: [deploy/README.md](./deploy/README.md)
+### Deploy via Git + Cloudflare Pages (18 chunks)
+
+1. **GitHub Actions** → run `Restore Wayback (18 chunks)` workflow
+2. Chunks land in `mirror-chunks/01/` … `18/` and are committed to git
+3. **Cloudflare Pages** (Framework preset: **None**):
+
+| Setting | Value |
+|---------|-------|
+| Build command | `pip install -r requirements.txt && bash scripts/assemble-and-build.sh` |
+| Output directory | `site` |
+
+Full details: [deploy/README.md](./deploy/README.md)
+
+```bash
+# Manual: download one chunk locally
+CHUNK=1 bash scripts/download-chunk.sh
+
+# Assemble all chunks into site/
+bash scripts/assemble-and-build.sh
+```
 
 ## Quick reference
 

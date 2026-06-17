@@ -1,0 +1,131 @@
+name: Restore Wayback (18 chunks)
+
+on:
+  workflow_dispatch:
+    inputs:
+      chunk:
+        description: "Single chunk 1–18 (empty = all 18)"
+        required: false
+        type: string
+      skip_assemble:
+        description: "Skip assemble/commit after download"
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: wayback-restore-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  SNAPSHOT_TIMESTAMP: "20230321042548"
+  REQUEST_DELAY: "0.75"
+  IMAGE_DELAY: "0.4"
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - name: Generate chunk lists
+        run: python3 scripts/split-chunks.py --parts 18
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chunk-lists
+          path: data/chunks/
+          retention-days: 7
+
+  download-chunk:
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        chunk: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+    if: >-
+      github.event_name != 'workflow_dispatch' ||
+      github.event.inputs.chunk == '' ||
+      github.event.inputs.chunk == format('{0}', matrix.chunk)
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: chunk-lists
+          path: data/chunks
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - name: Download chunk ${{ matrix.chunk }}
+        run: |
+          PAD=$(printf '%02d' ${{ matrix.chunk }})
+          echo "PAD=$PAD" >> "$GITHUB_ENV"
+          bash scripts/download-chunk.sh
+        env:
+          CHUNK: ${{ matrix.chunk }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mirror-chunk-${{ matrix.chunk }}
+          path: mirror-chunks/${{ env.PAD }}/
+          retention-days: 14
+
+  assemble-and-commit:
+    needs: download-chunk
+    if: >-
+      github.event_name != 'workflow_dispatch' ||
+      inputs.skip_assemble != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+
+      - name: Download all chunk artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Collect mirror-chunks
+        run: |
+          mkdir -p mirror-chunks
+          # Keep chunks already in git
+          for i in $(seq 1 18); do
+            pad=$(printf '%02d' "$i")
+            src="artifacts/mirror-chunk-$i"
+            if [[ -d "$src" ]]; then
+              mkdir -p "mirror-chunks/$pad"
+              rsync -a "$src/" "mirror-chunks/$pad/"
+              echo "Collected chunk $pad from artifact"
+            elif [[ -d "mirror-chunks/$pad" ]]; then
+              echo "Keeping chunk $pad from git"
+            else
+              echo "WARN: chunk $pad missing" >&2
+            fi
+          done
+          ls -la mirror-chunks/
+
+      - name: Assemble and build site
+        run: bash scripts/assemble-and-build.sh
+
+      - name: Commit mirror-chunks to git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add mirror-chunks/
+          if git diff --staged --quiet; then
+            echo "No changes in mirror-chunks"
+          else
+            git commit -m "Add/update mirror-chunks from Wayback restore ($(date -u +%Y-%m-%d))"
+            git push
+          fi

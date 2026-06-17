@@ -1,0 +1,128 @@
+[
+  {
+    "chunk": "01",
+    "file": "data/chunks/chunk-01.txt",
+    "urls": 128,
+    "site_pages": 84,
+    "products": 44
+  },
+  {
+    "chunk": "02",
+    "file": "data/chunks/chunk-02.txt",
+    "urls": 44,
+    "site_pages": 0,
+    "products": 44
+  },
+  {
+    "chunk": "03",
+    "file": "data/chunks/chunk-03.txt",
+    "urls": 44,
+    "site_pages": 0,
+    "products": 44
+  },
+  {
+    "chunk": "04",
+    "file": "data/chunks/chunk-04.txt",
+    "urls": 44,
+    "site_pages": 0,
+    "products": 44
+  },
+  {
+    "chunk": "05",
+    "file": "data/chunks/chunk-05.txt",
+    "urls": 44,
+    "site_pages": 0,
+    "products": 44
+  },
+  {
+    "chunk": "06",
+    "file": "data/chunks/chunk-06.txt",
+    "urls": 44,
+    "site_pages": 0,
+    "products": 44
+  },
+  {
+    "chunk": "07",
+    "file": "data/chunks/chunk-07.txt",
+    "urls": 44,
+    "site_pages": 0,
+    "products": 44
+  },
+  {
+    "chunk": "08",
+    "file": "data/chunks/chunk-08.txt",
+    "urls": 44,
+    "site_pages": 0,
+    "products": 44
+  },
+  {
+    "chunk": "09",
+    "file": "data/chunks/chunk-09.txt",
+    "urls": 44,
+    "site_pages": 0,
+    "products": 44
+  },
+  {
+    "chunk": "10",
+    "file": "data/chunks/chunk-10.txt",
+    "urls": 44,
+    "site_pages": 0,
+    "products": 44
+  },
+  {
+    "chunk": "11",
+    "file": "data/chunks/chunk-11.txt",
+    "urls": 43,
+    "site_pages": 0,
+    "products": 43
+  },
+  {
+    "chunk": "12",
+    "file": "data/chunks/chunk-12.txt",
+    "urls": 43,
+    "site_pages": 0,
+    "products": 43
+  },
+  {
+    "chunk": "13",
+    "file": "data/chunks/chunk-13.txt",
+    "urls": 43,
+    "site_pages": 0,
+    "products": 43
+  },
+  {
+    "chunk": "14",
+    "file": "data/chunks/chunk-14.txt",
+    "urls": 43,
+    "site_pages": 0,
+    "products": 43
+  },
+  {
+    "chunk": "15",
+    "file": "data/chunks/chunk-15.txt",
+    "urls": 43,
+    "site_pages": 0,
+    "products": 43
+  },
+  {
+    "chunk": "16",
+    "file": "data/chunks/chunk-16.txt",
+    "urls": 43,
+    "site_pages": 0,
+    "products": 43
+  },
+  {
+    "chunk": "17",
+    "file": "data/chunks/chunk-17.txt",
+    "urls": 43,
+    "site_pages": 0,
+    "products": 43
+  },
+  {
+    "chunk": "18",
+    "file": "data/chunks/chunk-18.txt",
+    "urls": 43,
+    "site_pages": 0,
+    "products": 43
+  }
+]
