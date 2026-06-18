@@ -21,7 +21,11 @@ mkdir -p "$MIRROR"
 for chunk in "$CHUNKS_DIR"/*/; do
   [[ -d "$chunk" ]] || continue
   echo "  + $(basename "$chunk")"
-  rsync -a "$chunk" "$MIRROR/"
+  if command -v rsync >/dev/null 2>&1; then
+    rsync -a "$chunk" "$MIRROR/"
+  else
+    cp -rn "$chunk"* "$MIRROR/" 2>/dev/null || cp -r "$chunk." "$MIRROR/"
+  fi
 done
 
 export MIRROR_DIR="$MIRROR"
